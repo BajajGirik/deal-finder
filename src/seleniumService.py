@@ -26,5 +26,4 @@ class Selenium:
         finally:
             self._driver.quit()
     
-ins = Selenium()
-ins.goToURL("www.google.com")
+
