@@ -1,27 +1,17 @@
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
 
 class Selenium:
-
     def __init__(self):
-        self._driver =  webdriver.Chrome()
-        self.instance = []
+        self.__driver =  webdriver.Chrome()
 
     def goToURL(self,url):
-        self._driver.get(url)
-        self._driver.quit()
+        self.__driver.get(url)
 
-    def findByCssSelector(self, url):
+    def findByCssSelector(self, cssSelector):
         try:
-            self._driver.get(url)
-            element = self._driver.find_element_by_css_selector(url)
+            element = self.__driver.find_element(By.CSS_SELECTOR, cssSelector)
             return element.text
-
-        except Exception:
-            print("Element not found.")
-    
-        finally:
-            self._driver.quit()
-    
-
+        except Exception as e:
+            # TODO: Add email notification for error
+            return None
