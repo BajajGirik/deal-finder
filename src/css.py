@@ -5,9 +5,7 @@ from selenium.webdriver.chrome.service import Service
 class Selenium:
 
     def __init__(self):
-
-        s = Service('/opt/homebrew/bin/chromedriver')
-        self._driver =  webdriver.Chrome(service=s)
+        self._driver =  webdriver.Chrome()
         self.instance = []
 
     def goToURL(self,url):
