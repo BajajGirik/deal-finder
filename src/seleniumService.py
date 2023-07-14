@@ -9,13 +9,11 @@ class Selenium:
         self.instance = []
 
     def goToURL(self,url):
-        
         self._driver.get(url)
         self._driver.quit()
 
     def findByCssSelector(self, url):
         try:
-        
             self._driver.get(url)
             element = self._driver.find_element_by_css_selector(url)
             return element.text
