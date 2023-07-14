@@ -1,0 +1,32 @@
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
+
+class Selenium:
+
+    def __init__(self):
+
+        s = Service('/opt/homebrew/bin/chromedriver')
+        self._driver =  webdriver.Chrome(service=s)
+        self.instance = []
+
+    def goToURL(self,url):
+        
+        self._driver.get(url)
+        self._driver.quit()
+
+    def findByCssSelector(self, url):
+        try:
+        
+            self._driver.get(url)
+            element = self._driver.find_element_by_css_selector(url)
+            return element.text
+
+        except Exception:
+            print("Element not found.")
+    
+        finally:
+            self._driver.quit()
+    
+ins = Selenium()
+ins.goToURL("www.google.com")
