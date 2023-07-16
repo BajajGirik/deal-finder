@@ -27,8 +27,8 @@ class ProductTrackerService:
         return doc
 
     def findByUserId(self, userId: str) -> List[ProductTrackerModel]:
-        doc = list(self.__collection.find({ "user_id": userId }))
-        return doc
+        docs = list(self.__collection.find({ "user_id": userId }))
+        return docs
 
     def findByNameForUser(self, name: str, userId: str) -> Optional[ProductTrackerModel]:
         doc = self.__collection.find_one({ "name": name, "user_id": userId })
