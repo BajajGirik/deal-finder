@@ -22,6 +22,11 @@ class ProductTrackerService:
     def __init__(self, collection: Collection[ProductTrackerModel]) -> None:
         self.__collection = collection
 
+    def findAll(self) -> List[ProductTrackerModel]:
+        docs = list(self.__collection.find({}))
+        return docs
+
+
     def findById(self, id: str) -> Optional[ProductTrackerModel]:
         doc = self.__collection.find_one({ "_id": ObjectId(id) })
         return doc
