@@ -13,7 +13,7 @@ class ProductTrackerModel(TypedDict):
     # price below which a notification will be sent to the user via the channel_id
     price_threshold: float
     # This will be the discord's channel id where the updates would be posted
-    channel_id: str
+    channel_id: int
     # The user id who requested tracking the product
     user_id: str
 
