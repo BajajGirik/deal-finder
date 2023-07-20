@@ -13,6 +13,9 @@ class EmailNotification:
    
     @staticmethod
     def sendEmail(message:str,subject:str,to:list[str]):
+        if not EmailNotification.__serviceAccEmail or not EmailNotification.__serviceAccPassword:
+            raise Exception("Please provide both service email and password to send email")
+
         context = ssl.create_default_context()
         with smtplib.SMTP_SSL('smtp.gmail.com', 465 , context=context) as gmail:    
             gmail.login(EmailNotification.__serviceAccEmail, EmailNotification.__serviceAccPassword)
