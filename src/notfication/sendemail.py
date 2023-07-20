@@ -8,7 +8,7 @@ load_dotenv()
 
 class EmailNotification:
     __serviceAccEmail = os.environ.get('SERVICE_EMAIL')
-    __serviceAccPassword = os.environ.get('SERVICE_PASSWORD')
+    __serviceAccPassword = os.environ.get('SERVICE_EMAIL_PASSWORD')
     _Default_subject = " Something went wrong !!"
    
     @staticmethod
