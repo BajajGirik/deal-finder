@@ -1,16 +1,16 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
-class Selenium:
+class WebBrowser:
     def __init__(self):
         self.__driver =  webdriver.Chrome()
 
-    def goToURL(self,url):
+    def go_to_url(self,url):
         self.__driver.get(url)
 
-    def findByCssSelector(self, cssSelector):
+    def get_element_text_by_css_selector(self, css_selector):
         try:
-            element = self.__driver.find_element(By.CSS_SELECTOR, cssSelector)
+            element = self.__driver.find_element(By.CSS_SELECTOR, css_selector)
             return element.text
         except Exception as e:
             # TODO: Add email notification for error
