@@ -7,13 +7,13 @@ load_dotenv()
 
 class Database:
     def __init__(self) -> None:
-       databaseURL = os.getenv('DATABASE_URL')
+       database_url = os.getenv('DATABASE_URL')
 
-       if not databaseURL:
+       if not database_url:
            # TODO: Notify via email
            print("DATABASE_URL not provided")
 
-       self.__client = MongoClient(databaseURL)
+       self.__client = MongoClient(database_url)
        self.__database = self.__client['deals']
 
-       self.productTracker = ProductTrackerService(self.__database['product-tracker'])
+       self.product_tracker = ProductTrackerService(self.__database['product_tracker'])

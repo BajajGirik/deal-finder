@@ -12,7 +12,7 @@ class EmailNotification:
     DEFAULT_SUBJECT = " Something went wrong !!"
 
     @staticmethod
-    def send_email(message:str,subject:str,to:list[str]):
+    def send_email(message:str,subject:str,to:list[str]) -> None:
         if not EmailNotification.__service_account_email or not EmailNotification.__service_account_password:
             raise Exception("Please provide both service email and password to send email")
 
