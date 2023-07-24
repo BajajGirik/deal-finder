@@ -24,11 +24,11 @@ class DiscordClientWrapper:
         else:
             self.client.run(token=DiscordClientWrapper._token)
 
-    async def sendMessageToChannel(self, channelId: int, messageText: str) -> Optional[int]:
+    async def send_message_to_channel(self, channel_id: int, message_text: str) -> Optional[int]:
         try:
-            channel = self.client.get_channel(channelId)
+            channel = self.client.get_channel(channel_id)
             if channel != None:
-                message = await channel.send(messageText)
+                message = await channel.send(message_text)
                 return message.id
             else:
                 print("Channel does not exist")

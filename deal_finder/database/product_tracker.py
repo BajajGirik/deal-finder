@@ -22,19 +22,18 @@ class ProductTrackerService:
     def __init__(self, collection: Collection[ProductTrackerModel]) -> None:
         self.__collection = collection
 
-    def findAll(self) -> List[ProductTrackerModel]:
+    def find_all(self) -> List[ProductTrackerModel]:
         docs = list(self.__collection.find({}))
         return docs
 
-
-    def findById(self, id: str) -> Optional[ProductTrackerModel]:
+    def find_by_id(self, id: str) -> Optional[ProductTrackerModel]:
         doc = self.__collection.find_one({ "_id": ObjectId(id) })
         return doc
 
-    def findByUserId(self, userId: str) -> List[ProductTrackerModel]:
-        docs = list(self.__collection.find({ "user_id": userId }))
+    def find_by_user_id(self, user_id: str) -> List[ProductTrackerModel]:
+        docs = list(self.__collection.find({ "user_id": user_id }))
         return docs
 
-    def findByNameForUser(self, name: str, userId: str) -> Optional[ProductTrackerModel]:
-        doc = self.__collection.find_one({ "name": name, "user_id": userId })
+    def find_by_name(self, name: str, user_id: str) -> Optional[ProductTrackerModel]:
+        doc = self.__collection.find_one({ "name": name, "user_id": user_id })
         return doc
