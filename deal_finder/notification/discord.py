@@ -17,7 +17,7 @@ class DiscordClientWrapper:
     def __init__(self) -> None:
         intents = discord.Intents.default()
         intents.message_content = True
-        self.__client = discord.Client(intents=intents)
+        self.__client = DiscordClient(intents=intents)
         if DiscordClientWrapper.__token == None:
             print("Token not provided")
             # TODO: Send error notification
