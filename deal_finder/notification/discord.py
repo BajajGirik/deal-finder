@@ -12,25 +12,22 @@ class DiscordClient(discord.Client):
 
 
 class DiscordClientWrapper:
-    __token = os.getenv('TOKEN')
-
     def __init__(self) -> None:
+        self.__token = os.getenv('TOKEN') or ""
+        if not self.__token:
+            raise Exception("Missing discord token")
+
         intents = discord.Intents.default()
         intents.message_content = True
         self.__client = DiscordClient(intents=intents)
-        if DiscordClientWrapper.__token == None:
-            raise Exception("Missing discord token")
-        self.__client.run(token=DiscordClientWrapper.__token)
 
     async def send_message_to_channel(self, channel_id: int, message_text: str) -> Optional[int]:
-        try:
-            channel = self.__client.get_channel(channel_id)
-            if channel != None:
-                message = await channel.send(message_text)
-                return message.id
-            else:
-                print("Channel does not exist")
-                # TODO: Send error notification
-        except Exception as e:
-            # TODO: send error notification
-            print(e)
+        if self.__client.is_closed():
+            await self.__client.login(token=self.__token)
+
+        channel = self.__client.get_channel(channel_id)
+        if not channel:
+            raise Exception(f"Channel with id: {channel_id} does not exist")
+
+        message = await channel.send(message_text)
+        return message.id
