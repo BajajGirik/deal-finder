@@ -2,6 +2,7 @@ from typing import Optional
 import discord
 import os
 from dotenv import load_dotenv
+import threading
 
 load_dotenv()
 
@@ -20,7 +21,12 @@ class DiscordClientWrapper:
         self.__client = DiscordClient(intents=intents)
         if DiscordClientWrapper.__token == None:
             raise Exception("Missing discord token")
-        self.__client.run(token=DiscordClientWrapper.__token)
+
+        self.__discordEventsThread = threading.Thread(target=self.__client.run, args=[DiscordClientWrapper.__token])
+        self.__discordEventsThread.start()
+
+    def __del__(self) -> None:
+        self.__discordEventsThread.join()
 
     async def send_message_to_channel(self, channel_id: int, message_text: str) -> Optional[int]:
         try:
