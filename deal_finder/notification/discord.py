@@ -19,10 +19,8 @@ class DiscordClientWrapper:
         intents.message_content = True
         self.__client = DiscordClient(intents=intents)
         if DiscordClientWrapper.__token == None:
-            print("Token not provided")
-            # TODO: Send error notification
-        else:
-            self.__client.run(token=DiscordClientWrapper.__token)
+            raise Exception("Missing discord token")
+        self.__client.run(token=DiscordClientWrapper.__token)
 
     async def send_message_to_channel(self, channel_id: int, message_text: str) -> Optional[int]:
         try:
