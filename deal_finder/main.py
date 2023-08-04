@@ -1,15 +1,15 @@
-from time import sleep
+from typing import TypedDict, List, Optional
 from database  import Database
-from constants import INTERNAL_EMAILS
 from database.product_tracker import ProductTrackerModel
 from utils import ProductMetaCollector
 from notification import Notification
-import asyncio
 
-database = Database()
-notification = Notification()
+class TrackProductResult(TypedDict):
+    lowest_price: float
+    available_on: str
+    inform_on: int
 
-async def track_product(product: ProductTrackerModel) -> None:
+def track_product(product: ProductTrackerModel) -> Optional[TrackProductResult]:
     min_price = None
     min_price_available_on = None
 
@@ -25,30 +25,23 @@ async def track_product(product: ProductTrackerModel) -> None:
             min_price = price
             min_price_available_on = url
 
-    if min_price == None or min_price_available_on == None:
-        return
+    if not min_price or not min_price_available_on:
+        return None
 
-    message = f"Price Dropped!!!\nURL: {min_price_available_on}\nPrice: {min_price}"
-    # TODO: Optimisation
-    # We can return these promises and await all of them at once rather than
-    # blocking the main thread for sending individual notifications
-    await notification.discord.send_message_to_channel(product["channel_id"], message)
+    return TrackProductResult(lowest_price=min_price, available_on=min_price_available_on, inform_on=product["channel_id"])
 
 
-async def track_all_products() -> None:
+def track_all_products() -> List[TrackProductResult]:
     products = database.product_tracker.find_all()
+    tracked_product_results: List[TrackProductResult] = []
+
     for product in products:
-        await track_product(product)
+        result = track_product(product)
+        if result:
+            tracked_product_results.append(result)
 
-async def main() -> None:
-    while True:
-        try:
-            await track_all_products()
-            sleep(10)
-        except Exception as e:
-            ## TODO: add better error handling
-            notification.email.send_email(str(e), notification.email.DEFAULT_SUBJECT, INTERNAL_EMAILS)
+    return tracked_product_results
 
 
-if __name__ == "__main__":
-    asyncio.run(main())
+database = Database()
+notification = Notification()
