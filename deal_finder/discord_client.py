@@ -2,7 +2,7 @@ import discord
 import os
 from dotenv import load_dotenv
 from discord.ext import tasks
-from main import track_all_products
+from jobs import ProductsTrackerJob
 
 load_dotenv()
 
@@ -10,13 +10,13 @@ load_dotenv()
 class DiscordClient(discord.Client):
     async def on_ready(self) -> None:
         print('Logged on as', self.user)
-        self.main.start()
+        self.track_products.start()
 
     @tasks.loop(minutes=25)
-    async def main(self) -> None:
-        result = track_all_products()
+    async def track_products(self) -> None:
+        result = ProductsTrackerJob.execute()
         for single_result in result:
-            channel_id = single_result["inform_on"];
+            channel_id = single_result["channel_id_to_notify"];
             channel = self.get_channel(channel_id)
             if not channel:
                 print(f"Channel with id: {channel_id} not found")
@@ -40,6 +40,3 @@ class DiscordClientWrapper:
             return
 
         client.run(token)
-
-
-DiscordClientWrapper.run()
