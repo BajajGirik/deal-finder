@@ -24,8 +24,6 @@ class DiscordClient(discord.Client):
             message = f"Price Dropped!!!\nURL: {single_result['available_on']}\nPrice: {single_result['lowest_price']}"
             await channel.send(message)
 
-    async def on_message(self, message) -> None:
-        print('Message on as', message)
 
 class DiscordClientWrapper:
     @staticmethod
