@@ -2,6 +2,8 @@ import discord
 import os
 from dotenv import load_dotenv
 from discord.ext import tasks
+from constants import INTERNAL_EMAILS
+from notification import Notification
 from jobs import ProductsTrackerJob
 
 load_dotenv()
@@ -23,6 +25,12 @@ class DiscordClient(discord.Client):
                 continue
             message = f"Price Dropped!!!\nURL: {single_result['available_on']}\nPrice: {single_result['lowest_price']}"
             await channel.send(message)
+
+    @track_products.error
+    async def on_error(self, error: BaseException):
+        print(error)
+        notification = Notification()
+        notification.email.send_email(str(error), notification.email.DEFAULT_SUBJECT, INTERNAL_EMAILS)
 
 
 class DiscordClientWrapper:
