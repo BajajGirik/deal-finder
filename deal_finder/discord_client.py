@@ -12,7 +12,7 @@ class DiscordClient(discord.Client):
         print('Logged on as', self.user)
         self.track_products.start()
 
-    @tasks.loop(minutes=25)
+    @tasks.loop(minutes=10)
     async def track_products(self) -> None:
         result = ProductsTrackerJob.execute()
         for single_result in result:
