@@ -3,10 +3,8 @@ from typing import List, Optional, TypedDict
 from database.database import Database
 from database.product_tracker import ProductTrackerModel
 from utils.product_meta_collector import ProductMetaCollector
-from notification.notification import Notification
 
 database = Database()
-notification = Notification()
 
 class ProductTrackingResult(TypedDict):
     lowest_price: float
