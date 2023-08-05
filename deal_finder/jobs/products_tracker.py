@@ -10,7 +10,7 @@ notification = Notification()
 class ProductTrackingResult(TypedDict):
     lowest_price: float
     available_on: str
-    channel_id_to_notify: int
+    channel_id_to_notify: str
 
 class ProductsTrackerJob:
     @staticmethod
