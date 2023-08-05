@@ -17,7 +17,7 @@ class DiscordClient(discord.Client):
         result = ProductsTrackerJob.execute()
         for single_result in result:
             channel_id = single_result["channel_id_to_notify"];
-            channel = self.get_channel(channel_id)
+            channel = self.get_channel(int(channel_id))
             if not channel:
                 print(f"Channel with id: {channel_id} not found")
                 continue
