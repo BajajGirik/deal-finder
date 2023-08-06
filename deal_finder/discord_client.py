@@ -2,7 +2,7 @@ import discord
 import os
 from dotenv import load_dotenv
 from discord.ext import tasks
-from constants import INTERNAL_EMAILS
+from constants import ERROR_NOTIFICATION_EMAIL_ADDRESSES
 from notification import Notification
 from jobs import ProductsTrackerJob
 
@@ -30,7 +30,7 @@ class DiscordClient(discord.Client):
     async def on_error(self, error: BaseException):
         print(error)
         notification = Notification()
-        notification.email.send_email(str(error), notification.email.DEFAULT_SUBJECT, INTERNAL_EMAILS)
+        notification.email.send_email(str(error), notification.email.DEFAULT_SUBJECT, ERROR_NOTIFICATION_EMAIL_ADDRESSES)
 
 
 class DiscordClientWrapper:
