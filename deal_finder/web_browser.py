@@ -1,10 +1,23 @@
 from typing import Optional
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 
 class WebBrowser:
     def __init__(self) -> None:
-        self.__driver =  webdriver.Chrome()
+        chrome_options = Options()
+        # Run in background without spinning up GUI interface. (Improves efficiency)
+        chrome_options.add_argument("--headless")
+        # Explicitly bypassing the security level in Docker with --no-sandbox
+        # Docker deamon always runs as a root user, Chrome crashes.
+        chrome_options.add_argument("--no-sandbox")
+        # Explicitly disabling the usage of /dev/shm/. The /dev/shm partition is
+        # too small in certain VM environments, causing Chrome to fail or crash.
+        chrome_options.add_argument("--disable-dev-shm-usage")
+        # Disabling image loading to improve efficiency
+        chrome_options.add_argument('--blink-settings=imagesEnabled=false')
+
+        self.__driver =  webdriver.Chrome(options=chrome_options)
 
     def go_to_url(self,url) -> None:
         self.__driver.get(url)
