@@ -37,3 +37,7 @@ class ProductTrackerService:
     def find_by_name(self, name: str, user_id: str) -> Optional[ProductTrackerModel]:
         doc = self.__collection.find_one({ "name": name, "user_id": user_id })
         return doc
+
+    def delete_by_id(self, id: str) -> bool:
+        res = self.__collection.delete_one({ "_id": ObjectId(id) })
+        return res.deleted_count > 0
