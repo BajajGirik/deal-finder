@@ -44,12 +44,17 @@ class ProductTrackerCog(commands.Cog):
         else:
             await ctx.reply(f"No product found for id = {product_id}")
 
-    @delete.error
-    async def delete_error(self, ctx: commands.Context, error: commands.CommandError) -> None:
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx: commands.Context, error: commands.CommandError) -> None:
+        print(error)
+
         if isinstance(error.__cause__, InvalidId):
             await ctx.reply("Invalid product id passed. Please try again")
             return
 
-        # TODO: Add basic common error handling for missing arguments etc.
+        if isinstance(error, commands.MissingRequiredArgument):
+            await ctx.reply("Missing required parameters.")
+            return
+
         # TODO: Send email
         await ctx.reply("Something went wrong")
