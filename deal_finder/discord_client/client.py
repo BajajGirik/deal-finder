@@ -3,6 +3,7 @@ from discord.ext import commands
 import os
 from dotenv import load_dotenv
 from constants import BOT_COMMAND_PREFIX
+from discord_client.product_tracker import ProductTrackerCog
 from discord_client.tasks import TasksCog
 
 load_dotenv()
@@ -11,6 +12,7 @@ load_dotenv()
 class DiscordBot(commands.Bot):
     async def setup_hook(self) -> None:
         await self.add_cog(TasksCog(self))
+        await self.add_cog(ProductTrackerCog(self))
 
     async def on_ready(self) -> None:
         print('Logged on as', self.user)
