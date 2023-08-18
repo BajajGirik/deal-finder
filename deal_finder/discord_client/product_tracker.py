@@ -1,3 +1,4 @@
+from bson.errors import InvalidId
 from discord.ext import commands
 from database.database import Database
 
@@ -33,3 +34,22 @@ class ProductTrackerCog(commands.Cog):
         message += "Enjoy Tracking!!"
 
         await ctx.reply(message)
+
+    @product_tracker.command()
+    async def delete(self, ctx: commands.Context, product_id: str) -> None:
+        is_successful = database.product_tracker.delete_by_id(product_id)
+
+        if is_successful:
+            await ctx.reply("Successfully deleted product tracking info")
+        else:
+            await ctx.reply(f"No product found for id = {product_id}")
+
+    @delete.error
+    async def delete_error(self, ctx: commands.Context, error: commands.CommandError) -> None:
+        if isinstance(error.__cause__, InvalidId):
+            await ctx.reply("Invalid product id passed. Please try again")
+            return
+
+        # TODO: Add basic common error handling for missing arguments etc.
+        # TODO: Send email
+        await ctx.reply("Something went wrong")
