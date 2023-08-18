@@ -1,6 +1,7 @@
 from bson.errors import InvalidId
 from discord.ext import commands
 from database.database import Database
+from utils.transformer import TransformerUtils
 
 database = Database()
 
@@ -36,6 +37,15 @@ class ProductTrackerCog(commands.Cog):
         await ctx.reply(message)
 
     @product_tracker.command()
+    async def add(self, ctx: commands.Context, name: str, price_threshold: float, *args: str) -> None:
+        urls = TransformerUtils.validate_and_sanitize_urls(*args)
+        user_id = ctx.message.author.id
+        channel_id = ctx.message.channel.id
+
+        inserted_id = database.product_tracker.insert(name, price_threshold, urls, str(user_id), str(channel_id))
+        await ctx.reply(f"Successfully inserted product with id = {inserted_id}")
+
+    @product_tracker.command()
     async def delete(self, ctx: commands.Context, product_id: str) -> None:
         is_successful = database.product_tracker.delete_by_id(product_id)
 
@@ -54,6 +64,10 @@ class ProductTrackerCog(commands.Cog):
 
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.reply("Missing required parameters.")
+            return
+
+        if str(error.__cause__) == TransformerUtils.UNSUPPORTED_URL_EXCEPTION_STRING:
+            await ctx.reply("Only amazon or flipkart URLs are allowed currently")
             return
 
         # TODO: Send email
