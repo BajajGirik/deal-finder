@@ -47,6 +47,10 @@ class ProductTrackerService:
         result = self.__collection.insert_one(payload)
         return str(result.inserted_id)
 
+    def insert_url(self, id: str, url: str) -> bool:
+        result = self.__collection.update_one({ "_id": ObjectId(id) }, { "$addToSet": { "url": url }})
+        return result.matched_count > 0
+
     def update_name(self, id: str, name: str) -> bool:
         result = self.__collection.update_one({ "_id": ObjectId(id) }, { "$set": { "name": name }})
         return result.matched_count > 0
@@ -62,3 +66,7 @@ class ProductTrackerService:
     def delete_by_id(self, id: str) -> bool:
         res = self.__collection.delete_one({ "_id": ObjectId(id) })
         return res.deleted_count > 0
+
+    def delete_url(self, id: str, url: str) -> bool:
+        result = self.__collection.update_one({ "_id": ObjectId(id) }, { "$pull": { "url": url }})
+        return result.matched_count > 0
