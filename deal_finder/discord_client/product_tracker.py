@@ -81,8 +81,8 @@ class ProductTrackerCog(commands.Cog):
         else:
             await ctx.reply(f"No product found for id = {product_id}")
 
-    @update.command()
-    async def url(self, ctx: commands.Context, product_id: str, old_url: str, new_url: str) -> None:
+    @update.command(name="url")
+    async def update_url(self, ctx: commands.Context, product_id: str, old_url: str, new_url: str) -> None:
         urls = TransformerUtils.validate_and_sanitize_urls(new_url)
         is_successful = database.product_tracker.update_url(product_id, old_url, urls[0])
 
