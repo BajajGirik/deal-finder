@@ -2,6 +2,7 @@ from bson.errors import InvalidId
 from discord import Embed
 from discord.ext import commands
 from database.database import Database
+from constants import ERROR_MESSAGES
 from utils.transformer import TransformerUtils
 
 database = Database()
@@ -47,7 +48,7 @@ class ProductTrackerCog(commands.Cog):
     @product_tracker.group()
     async def add(self, ctx: commands.Context) -> None:
         if ctx.invoked_subcommand is None:
-            await ctx.reply("Missing required arguments...")
+            await ctx.reply(ERROR_MESSAGES["MISSING_ARGUMENTS"])
 
     @add.command(name="product")
     async def add_product(self, ctx: commands.Context, name: str, price_threshold: float, *args: str) -> None:
@@ -66,12 +67,12 @@ class ProductTrackerCog(commands.Cog):
         if is_successful:
             await ctx.reply(f"Successfully added url = {urls[0]} to product")
         else:
-            await ctx.reply(f"No product found for id = {product_id}")
+            await ctx.reply(ERROR_MESSAGES["NO_PRODUCT_FOUND"].format(product_id))
 
     @product_tracker.group()
     async def update(self, ctx: commands.Context) -> None:
         if ctx.invoked_subcommand is None:
-            await ctx.reply("Missing required arguments...")
+            await ctx.reply(ERROR_MESSAGES["MISSING_ARGUMENTS"])
 
     @update.command()
     async def name(self, ctx: commands.Context, product_id: str, name: str) -> None:
@@ -79,7 +80,7 @@ class ProductTrackerCog(commands.Cog):
         if is_successful:
             await ctx.reply(f"Successfully updated product name to {name}")
         else:
-            await ctx.reply(f"No product found for id = {product_id}")
+            await ctx.reply(ERROR_MESSAGES["NO_PRODUCT_FOUND"].format(product_id))
 
     @update.command()
     async def price_threshold(self, ctx: commands.Context, product_id: str, price_threshold: float) -> None:
@@ -87,7 +88,7 @@ class ProductTrackerCog(commands.Cog):
         if is_successful:
             await ctx.reply(f"Successfully updated product price_threshold to {price_threshold}")
         else:
-            await ctx.reply(f"No product found for id = {product_id}")
+            await ctx.reply(ERROR_MESSAGES["NO_PRODUCT_FOUND"].format(product_id))
 
     @update.command(name="url")
     async def update_url(self, ctx: commands.Context, product_id: str, old_url: str, new_url: str) -> None:
@@ -102,7 +103,7 @@ class ProductTrackerCog(commands.Cog):
     @product_tracker.group()
     async def delete(self, ctx: commands.Context) -> None:
         if ctx.invoked_subcommand is None:
-            await ctx.reply("Missing required arguments...")
+            await ctx.reply(ERROR_MESSAGES["MISSING_ARGUMENTS"])
 
     @delete.command(name="product")
     async def delete_product(self, ctx: commands.Context, product_id: str) -> None:
@@ -111,7 +112,7 @@ class ProductTrackerCog(commands.Cog):
         if is_successful:
             await ctx.reply("Successfully deleted product tracking info")
         else:
-            await ctx.reply(f"No product found for id = {product_id}")
+            await ctx.reply(ERROR_MESSAGES["NO_PRODUCT_FOUND"].format(product_id))
 
     @delete.command(name="url")
     async def delete_url(self, ctx: commands.Context, product_id: str, url: str) -> None:
@@ -120,7 +121,7 @@ class ProductTrackerCog(commands.Cog):
         if is_successful:
             await ctx.reply(f"Successfully deleted url = {url} from product")
         else:
-            await ctx.reply(f"No product found for id = {product_id}")
+            await ctx.reply(ERROR_MESSAGES["NO_PRODUCT_FOUND"].format(product_id))
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx: commands.Context, error: commands.CommandError) -> None:
@@ -131,7 +132,7 @@ class ProductTrackerCog(commands.Cog):
             return
 
         if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.reply("Missing required parameters.")
+            await ctx.reply(ERROR_MESSAGES["MISSING_ARGUMENTS"])
             return
 
         if str(error.__cause__) == TransformerUtils.UNSUPPORTED_URL_EXCEPTION_STRING:
