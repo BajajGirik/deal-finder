@@ -91,12 +91,26 @@ class ProductTrackerCog(commands.Cog):
         else:
             await ctx.reply("No product/url found")
 
-    @product_tracker.command()
-    async def delete(self, ctx: commands.Context, product_id: str) -> None:
+    @product_tracker.group()
+    async def delete(self, ctx: commands.Context) -> None:
+        if ctx.invoked_subcommand is None:
+            await ctx.reply("Missing required arguments...")
+
+    @delete.command(name="product")
+    async def delete_product(self, ctx: commands.Context, product_id: str) -> None:
         is_successful = database.product_tracker.delete_by_id(product_id)
 
         if is_successful:
             await ctx.reply("Successfully deleted product tracking info")
+        else:
+            await ctx.reply(f"No product found for id = {product_id}")
+
+    @delete.command(name="url")
+    async def delete_url(self, ctx: commands.Context, product_id: str, url: str) -> None:
+        is_successful = database.product_tracker.delete_url(product_id, url)
+
+        if is_successful:
+            await ctx.reply(f"Successfully deleted url = {url} from product")
         else:
             await ctx.reply(f"No product found for id = {product_id}")
 
