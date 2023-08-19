@@ -1,4 +1,5 @@
 from bson.errors import InvalidId
+from discord import Embed
 from discord.ext import commands
 from database.database import Database
 from utils.transformer import TransformerUtils
@@ -23,18 +24,25 @@ class ProductTrackerCog(commands.Cog):
             await ctx.reply("No products found")
             return
 
-        message = f"List of products tracked:\n"
+        message = ""
 
         for product in products:
             id = product["_id"]
             name = product["name"]
             price_threshold = product["price_threshold"]
-            urls = ", ".join(product["url"])
-            message += f"* {name}\n  * ID: {id}\n * Price threshold: {price_threshold}\n * URLs: {urls}\n\n"
+            message += f"> 🆔 ID:  {id}\n> \n> 📛 Name:  {name}\n> \n> 💰 Price threshold:  {price_threshold}\n> \n> 🔗 URLs:\n"
 
-        message += "Enjoy Tracking!!"
+            for url in product["url"]:
+                message += f"> * {url}\n"
 
-        await ctx.reply(message)
+            message += "\n\n\n"
+
+        embed = Embed()
+        embed.title = "List of products tracked"
+        embed.colour = 16711763
+        embed.description = message
+
+        await ctx.reply(embed=embed)
 
     @product_tracker.group()
     async def add(self, ctx: commands.Context) -> None:
