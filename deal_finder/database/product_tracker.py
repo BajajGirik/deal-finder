@@ -47,6 +47,18 @@ class ProductTrackerService:
         result = self.__collection.insert_one(payload)
         return str(result.inserted_id)
 
+    def update_name(self, id: str, name: str) -> bool:
+        result = self.__collection.update_one({ "_id": ObjectId(id) }, { "$set": { "name": name }})
+        return result.matched_count > 0
+
+    def update_price_threshold(self, id: str, price_threshold: float) -> bool:
+        result = self.__collection.update_one({ "_id": ObjectId(id) }, { "$set": { "price_threshold": price_threshold }})
+        return result.matched_count > 0
+
+    def update_url(self, id: str, old_url: str, new_url: str) -> bool:
+        result = self.__collection.update_one({ "_id": ObjectId(id), "url": old_url }, { "$set": {f"url.$": new_url }})
+        return result.matched_count > 0
+
     def delete_by_id(self, id: str) -> bool:
         res = self.__collection.delete_one({ "_id": ObjectId(id) })
         return res.deleted_count > 0
