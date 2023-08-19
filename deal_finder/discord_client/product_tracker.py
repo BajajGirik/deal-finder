@@ -45,6 +45,37 @@ class ProductTrackerCog(commands.Cog):
         inserted_id = database.product_tracker.insert(name, price_threshold, urls, str(user_id), str(channel_id))
         await ctx.reply(f"Successfully inserted product with id = {inserted_id}")
 
+    @product_tracker.group()
+    async def update(self, ctx: commands.Context) -> None:
+        if ctx.invoked_subcommand is None:
+            await ctx.reply("Missing required arguments...")
+
+    @update.command()
+    async def name(self, ctx: commands.Context, product_id: str, name: str) -> None:
+        is_successful = database.product_tracker.update_name(product_id, name)
+        if is_successful:
+            await ctx.reply(f"Successfully updated product name to {name}")
+        else:
+            await ctx.reply(f"No product found for id = {product_id}")
+
+    @update.command()
+    async def price_threshold(self, ctx: commands.Context, product_id: str, price_threshold: float) -> None:
+        is_successful = database.product_tracker.update_price_threshold(product_id, price_threshold)
+        if is_successful:
+            await ctx.reply(f"Successfully updated product price_threshold to {price_threshold}")
+        else:
+            await ctx.reply(f"No product found for id = {product_id}")
+
+    @update.command()
+    async def url(self, ctx: commands.Context, product_id: str, old_url: str, new_url: str) -> None:
+        urls = TransformerUtils.validate_and_sanitize_urls(new_url)
+        is_successful = database.product_tracker.update_url(product_id, old_url, urls[0])
+
+        if is_successful:
+            await ctx.reply(f"Successfully updated url to {urls[0]}")
+        else:
+            await ctx.reply("No product/url found")
+
     @product_tracker.command()
     async def delete(self, ctx: commands.Context, product_id: str) -> None:
         is_successful = database.product_tracker.delete_by_id(product_id)
