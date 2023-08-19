@@ -36,14 +36,29 @@ class ProductTrackerCog(commands.Cog):
 
         await ctx.reply(message)
 
-    @product_tracker.command()
-    async def add(self, ctx: commands.Context, name: str, price_threshold: float, *args: str) -> None:
+    @product_tracker.group()
+    async def add(self, ctx: commands.Context) -> None:
+        if ctx.invoked_subcommand is None:
+            await ctx.reply("Missing required arguments...")
+
+    @add.command(name="product")
+    async def add_product(self, ctx: commands.Context, name: str, price_threshold: float, *args: str) -> None:
         urls = TransformerUtils.validate_and_sanitize_urls(*args)
         user_id = ctx.message.author.id
         channel_id = ctx.message.channel.id
 
         inserted_id = database.product_tracker.insert(name, price_threshold, urls, str(user_id), str(channel_id))
         await ctx.reply(f"Successfully inserted product with id = {inserted_id}")
+
+    @add.command(name="url")
+    async def add_url(self, ctx: commands.Context, product_id: str, url: str) -> None:
+        urls = TransformerUtils.validate_and_sanitize_urls(url)
+        is_successful = database.product_tracker.insert_url(product_id, urls[0])
+
+        if is_successful:
+            await ctx.reply(f"Successfully added url = {urls[0]} to product")
+        else:
+            await ctx.reply(f"No product found for id = {product_id}")
 
     @product_tracker.group()
     async def update(self, ctx: commands.Context) -> None:
