@@ -11,10 +11,13 @@ class ProductTrackerCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+    async def __handle_command_group(self, ctx: commands.Context) -> None:
+        if ctx.invoked_subcommand is None:
+            await ctx.reply("No subcommand invoked. Please pass correct subcommand along with necessary arguments")
+
     @commands.group()
     async def product_tracker(self, ctx: commands.Context) -> None:
-        if ctx.invoked_subcommand is None:
-            await ctx.reply('Invalid command passed...')
+        await self.__handle_command_group(ctx)
 
     @product_tracker.command()
     async def list(self, ctx: commands.Context) -> None:
@@ -47,8 +50,7 @@ class ProductTrackerCog(commands.Cog):
 
     @product_tracker.group()
     async def add(self, ctx: commands.Context) -> None:
-        if ctx.invoked_subcommand is None:
-            await ctx.reply(ERROR_MESSAGES["MISSING_ARGUMENTS"])
+        await self.__handle_command_group(ctx)
 
     @add.command(name="product")
     async def add_product(self, ctx: commands.Context, name: str, price_threshold: float, *args: str) -> None:
@@ -71,8 +73,7 @@ class ProductTrackerCog(commands.Cog):
 
     @product_tracker.group()
     async def update(self, ctx: commands.Context) -> None:
-        if ctx.invoked_subcommand is None:
-            await ctx.reply(ERROR_MESSAGES["MISSING_ARGUMENTS"])
+        await self.__handle_command_group(ctx)
 
     @update.command()
     async def name(self, ctx: commands.Context, product_id: str, name: str) -> None:
@@ -102,8 +103,7 @@ class ProductTrackerCog(commands.Cog):
 
     @product_tracker.group()
     async def delete(self, ctx: commands.Context) -> None:
-        if ctx.invoked_subcommand is None:
-            await ctx.reply(ERROR_MESSAGES["MISSING_ARGUMENTS"])
+        await self.__handle_command_group(ctx)
 
     @delete.command(name="product")
     async def delete_product(self, ctx: commands.Context, product_id: str) -> None:
