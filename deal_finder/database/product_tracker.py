@@ -40,6 +40,9 @@ class ProductTrackerService:
         doc = self.__collection.find_one({ "name": name, "user_id": user_id })
         return doc
 
+    def count_products_tracked_by_user(self, user_id: str) -> int:
+        return self.__collection.count_documents({ "user_id": user_id })
+
     def insert(self, name: str, price_threshold: float, url: URLType, user_id: str, channel_id: str) -> str:
         # TODO: Find another way to construct object without passing "_id"
         # If we don't supply "_id", the typing breaks and compiler complains
