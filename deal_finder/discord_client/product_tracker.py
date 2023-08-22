@@ -2,7 +2,8 @@ from bson.errors import InvalidId
 from discord import Embed
 from discord.ext import commands
 from database.database import Database
-from constants import ERROR_MESSAGES, ERROR_NOTIFICATION_EMAIL_ADDRESSES
+from constants import ERROR_MESSAGES, ERROR_NOTIFICATION_EMAIL_ADDRESSES, MAX_PRODUCTS_TRACKED_PER_USER
+from utils.discord import DiscordUtils
 from notification import Notification
 from utils.transformer import TransformerUtils
 
@@ -54,6 +55,7 @@ class ProductTrackerCog(commands.Cog):
         await self.__handle_command_group(ctx)
 
     @add.command(name="product")
+    @commands.check(DiscordUtils.can_user_track_more_products)
     async def add_product(self, ctx: commands.Context, name: str, price_threshold: float, *args: str) -> None:
         urls = TransformerUtils.validate_and_sanitize_urls(*args)
         user_id = ctx.message.author.id
@@ -134,6 +136,11 @@ class ProductTrackerCog(commands.Cog):
 
         if isinstance(error, commands.MissingRequiredArgument):
             await ctx.reply(ERROR_MESSAGES["MISSING_ARGUMENTS"])
+            return
+
+        # TODO: Implement better error handling. It's too generic
+        if isinstance(error, commands.CheckFailure):
+            await ctx.reply(f"Limit Reached. You can only track upto {MAX_PRODUCTS_TRACKED_PER_USER} products currently.")
             return
 
         if str(error.__cause__) == TransformerUtils.UNSUPPORTED_URL_EXCEPTION_STRING:
