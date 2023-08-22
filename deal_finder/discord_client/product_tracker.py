@@ -2,7 +2,8 @@ from bson.errors import InvalidId
 from discord import Embed
 from discord.ext import commands
 from database.database import Database
-from constants import ERROR_MESSAGES
+from constants import ERROR_MESSAGES, ERROR_NOTIFICATION_EMAIL_ADDRESSES
+from notification import Notification
 from utils.transformer import TransformerUtils
 
 database = Database()
@@ -139,5 +140,7 @@ class ProductTrackerCog(commands.Cog):
             await ctx.reply("Only amazon or flipkart URLs are allowed currently")
             return
 
-        # TODO: Send email
+        notification = Notification()
+        notification.email.send_email(str(error), "[Error] Discord Command", ERROR_NOTIFICATION_EMAIL_ADDRESSES)
+
         await ctx.reply("Something went wrong")
