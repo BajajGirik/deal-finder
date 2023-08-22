@@ -1,4 +1,4 @@
-from discord_client import DiscordClientWrapper
+from discord_client import DiscordWrapper
 
 if __name__ == "__main__":
-    DiscordClientWrapper.run()
+    DiscordWrapper.run()
