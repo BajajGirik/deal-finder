@@ -21,7 +21,7 @@ class ProductMetaCollector:
 
     @staticmethod
     def get_product_meta_from_amazon() -> ProductMeta:
-        price = ProductMetaCollector.__get_price(".priceToPay")
+        price = ProductMetaCollector.__get_price("#corePriceDisplay_desktop_feature_div .a-offscreen")
 
         product_availability_text = web_browser.get_element_text_by_css_selector("#availability > span")
         if not product_availability_text:
