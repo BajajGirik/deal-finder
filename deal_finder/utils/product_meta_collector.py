@@ -4,11 +4,14 @@ from utils.transformer import TransformerUtils
 from utils.url import URLUtils
 from web_browser import WebBrowser
 
+
 class ProductMeta(TypedDict):
     price: float
     is_out_of_stock: bool
 
+
 web_browser = WebBrowser()
+
 
 class ProductMetaCollector:
     @staticmethod
@@ -21,25 +24,29 @@ class ProductMetaCollector:
 
     @staticmethod
     def get_product_meta_from_amazon() -> ProductMeta:
-        price = ProductMetaCollector.__get_price("#corePriceDisplay_desktop_feature_div .a-offscreen")
+        price = ProductMetaCollector.__get_price(
+            "#corePriceDisplay_desktop_feature_div .a-offscreen"
+        )
 
-        product_availability_text = web_browser.get_element_text_by_css_selector("#availability > span")
+        product_availability_text = web_browser.get_element_text_by_css_selector(
+            "#availability > span"
+        )
         if not product_availability_text:
             # TODO: What happens if this doesn't exist?
-            return ProductMeta(price = price, is_out_of_stock=True)
+            return ProductMeta(price=price, is_out_of_stock=True)
 
         product_availability_text = product_availability_text.strip()
         is_out_of_stock = "currently unavailable" in product_availability_text.lower()
 
         return ProductMeta(price=price, is_out_of_stock=is_out_of_stock)
 
-
     @staticmethod
     def get_product_meta_from_flipkart() -> ProductMeta:
         price = ProductMetaCollector.__get_price("._30jeq3._16Jk6d")
-        is_out_of_stock = web_browser.get_element_text_by_css_selector("._2IVIi8._2Dfasx")
+        is_out_of_stock = web_browser.get_element_text_by_css_selector(
+            "._2IVIi8._2Dfasx"
+        )
         return ProductMeta(price=price, is_out_of_stock=bool(is_out_of_stock))
-
 
     @staticmethod
     def get_product_meta(url: str) -> ProductMeta:

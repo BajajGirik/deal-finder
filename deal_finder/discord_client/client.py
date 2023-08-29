@@ -8,6 +8,7 @@ from discord_client.tasks import TasksCog
 
 load_dotenv()
 
+
 # Optional TODO: Can add ping command to get the latest price directly via discord
 class DiscordBot(commands.Bot):
     async def setup_hook(self) -> None:
@@ -15,7 +16,7 @@ class DiscordBot(commands.Bot):
         await self.add_cog(ProductTrackerCog(self))
 
     async def on_ready(self) -> None:
-        print('Logged on as', self.user)
+        print("Logged on as", self.user)
 
 
 class DiscordWrapper:

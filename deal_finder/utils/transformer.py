@@ -2,6 +2,7 @@ import re
 from typing import List
 from utils.url import URLUtils
 
+
 class TransformerUtils:
     UNSUPPORTED_URL_EXCEPTION_STRING = "Unsupported urls"
 
