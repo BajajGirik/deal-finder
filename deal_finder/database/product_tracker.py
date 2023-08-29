@@ -4,6 +4,7 @@ from bson import ObjectId
 
 URLType = List[str]
 
+
 class ProductTrackerModel(TypedDict):
     _id: ObjectId
     # This is a custom name provided by the user.
@@ -29,47 +30,71 @@ class ProductTrackerService:
         return docs
 
     def find_by_id(self, id: str) -> Optional[ProductTrackerModel]:
-        doc = self.__collection.find_one({ "_id": ObjectId(id) })
+        doc = self.__collection.find_one({"_id": ObjectId(id)})
         return doc
 
     def find_by_user_id(self, user_id: str) -> List[ProductTrackerModel]:
-        docs = list(self.__collection.find({ "user_id": user_id }))
+        docs = list(self.__collection.find({"user_id": user_id}))
         return docs
 
     def find_by_name(self, name: str, user_id: str) -> Optional[ProductTrackerModel]:
-        doc = self.__collection.find_one({ "name": name, "user_id": user_id })
+        doc = self.__collection.find_one({"name": name, "user_id": user_id})
         return doc
 
     def count_products_tracked_by_user(self, user_id: str) -> int:
-        return self.__collection.count_documents({ "user_id": user_id })
+        return self.__collection.count_documents({"user_id": user_id})
 
-    def insert(self, name: str, price_threshold: float, url: URLType, user_id: str, channel_id: str) -> str:
+    def insert(
+        self,
+        name: str,
+        price_threshold: float,
+        url: URLType,
+        user_id: str,
+        channel_id: str,
+    ) -> str:
         # TODO: Find another way to construct object without passing "_id"
         # If we don't supply "_id", the typing breaks and compiler complains
-        payload = ProductTrackerModel(_id=ObjectId(), name=name, price_threshold=price_threshold, url=url, channel_id=channel_id, user_id=user_id)
+        payload = ProductTrackerModel(
+            _id=ObjectId(),
+            name=name,
+            price_threshold=price_threshold,
+            url=url,
+            channel_id=channel_id,
+            user_id=user_id,
+        )
         result = self.__collection.insert_one(payload)
         return str(result.inserted_id)
 
     def insert_url(self, id: str, url: str) -> bool:
-        result = self.__collection.update_one({ "_id": ObjectId(id) }, { "$addToSet": { "url": url }})
+        result = self.__collection.update_one(
+            {"_id": ObjectId(id)}, {"$addToSet": {"url": url}}
+        )
         return result.matched_count > 0
 
     def update_name(self, id: str, name: str) -> bool:
-        result = self.__collection.update_one({ "_id": ObjectId(id) }, { "$set": { "name": name }})
+        result = self.__collection.update_one(
+            {"_id": ObjectId(id)}, {"$set": {"name": name}}
+        )
         return result.matched_count > 0
 
     def update_price_threshold(self, id: str, price_threshold: float) -> bool:
-        result = self.__collection.update_one({ "_id": ObjectId(id) }, { "$set": { "price_threshold": price_threshold }})
+        result = self.__collection.update_one(
+            {"_id": ObjectId(id)}, {"$set": {"price_threshold": price_threshold}}
+        )
         return result.matched_count > 0
 
     def update_url(self, id: str, old_url: str, new_url: str) -> bool:
-        result = self.__collection.update_one({ "_id": ObjectId(id), "url": old_url }, { "$set": {f"url.$": new_url }})
+        result = self.__collection.update_one(
+            {"_id": ObjectId(id), "url": old_url}, {"$set": {f"url.$": new_url}}
+        )
         return result.matched_count > 0
 
     def delete_by_id(self, id: str) -> bool:
-        res = self.__collection.delete_one({ "_id": ObjectId(id) })
+        res = self.__collection.delete_one({"_id": ObjectId(id)})
         return res.deleted_count > 0
 
     def delete_url(self, id: str, url: str) -> bool:
-        result = self.__collection.update_one({ "_id": ObjectId(id) }, { "$pull": { "url": url }})
+        result = self.__collection.update_one(
+            {"_id": ObjectId(id)}, {"$pull": {"url": url}}
+        )
         return result.matched_count > 0
