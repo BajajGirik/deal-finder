@@ -1,0 +1,37 @@
+name: Format code
+run-name: "[Format code]: ${{ github.actor }} initiated format code workflow on branch ${{ github.ref }}"
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - closed
+
+jobs:
+  format_on_merge:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+    - uses: actions/setup-python@v4
+      with:
+        python-version: "3.9"
+    - name: Install and run formatter
+      run: |
+        pip install black
+        python -m black $(git ls-files "*.py")
+    - name: Commit code format changes
+      run: |
+        git config --global user.name "github-actions[bot]"
+        git config --global user.email "github-actions[bot]@noreply.github.com"
+        modified_files=$(git ls-files -m)
+        if [ -z "$modified_files" ]; then
+          echo "No format changes to push"
+        else
+          echo "Format changes present. Pushing code..."
+          git commit -am "github-actions: format code"
+          git push
+        fi
