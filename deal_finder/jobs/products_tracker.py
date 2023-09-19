@@ -6,10 +6,12 @@ from utils.product_meta_collector import ProductMetaCollector
 
 database = Database()
 
+
 class ProductTrackingResult(TypedDict):
     lowest_price: float
     available_on: str
     channel_id_to_notify: str
+
 
 class ProductsTrackerJob:
     @staticmethod
@@ -29,9 +31,10 @@ class ProductsTrackerJob:
         print(f"Found optimial prices for {len(tracked_product_results)} product(s)")
 
         total_time = round(time() - start_time, 2)
-        print(f"Total time taken to track {len(products)} product(s): {total_time} seconds")
+        print(
+            f"Total time taken to track {len(products)} product(s): {total_time} seconds"
+        )
         return tracked_product_results
-
 
     @staticmethod
     def track_product(product: ProductTrackerModel) -> Optional[ProductTrackingResult]:
@@ -56,4 +59,8 @@ class ProductsTrackerJob:
             return None
 
         print("Found optimal price")
-        return ProductTrackingResult(lowest_price=min_price, available_on=min_price_available_on, channel_id_to_notify=product["channel_id"])
+        return ProductTrackingResult(
+            lowest_price=min_price,
+            available_on=min_price_available_on,
+            channel_id_to_notify=product["channel_id"],
+        )

@@ -2,12 +2,17 @@ from bson.errors import InvalidId
 from discord import Embed
 from discord.ext import commands
 from database.database import Database
-from constants import ERROR_MESSAGES, ERROR_NOTIFICATION_EMAIL_ADDRESSES, MAX_PRODUCTS_TRACKED_PER_USER
+from constants import (
+    ERROR_MESSAGES,
+    ERROR_NOTIFICATION_EMAIL_ADDRESSES,
+    MAX_PRODUCTS_TRACKED_PER_USER,
+)
 from utils.discord import DiscordUtils
 from notification import Notification
 from utils.transformer import TransformerUtils
 
 database = Database()
+
 
 class ProductTrackerCog(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -15,7 +20,9 @@ class ProductTrackerCog(commands.Cog):
 
     async def __handle_command_group(self, ctx: commands.Context) -> None:
         if ctx.invoked_subcommand is None:
-            await ctx.reply("No subcommand invoked. Please pass correct subcommand along with necessary arguments")
+            await ctx.reply(
+                "No subcommand invoked. Please pass correct subcommand along with necessary arguments"
+            )
 
     @commands.group()
     async def product_tracker(self, ctx: commands.Context) -> None:
@@ -56,12 +63,16 @@ class ProductTrackerCog(commands.Cog):
 
     @add.command(name="product")
     @commands.check(DiscordUtils.can_user_track_more_products)
-    async def add_product(self, ctx: commands.Context, name: str, price_threshold: float, *args: str) -> None:
+    async def add_product(
+        self, ctx: commands.Context, name: str, price_threshold: float, *args: str
+    ) -> None:
         urls = TransformerUtils.validate_and_sanitize_urls(*args)
         user_id = ctx.message.author.id
         channel_id = ctx.message.channel.id
 
-        inserted_id = database.product_tracker.insert(name, price_threshold, urls, str(user_id), str(channel_id))
+        inserted_id = database.product_tracker.insert(
+            name, price_threshold, urls, str(user_id), str(channel_id)
+        )
         await ctx.reply(f"Successfully inserted product with id = {inserted_id}")
 
     @add.command(name="url")
@@ -87,17 +98,27 @@ class ProductTrackerCog(commands.Cog):
             await ctx.reply(ERROR_MESSAGES["NO_PRODUCT_FOUND"].format(product_id))
 
     @update.command()
-    async def price_threshold(self, ctx: commands.Context, product_id: str, price_threshold: float) -> None:
-        is_successful = database.product_tracker.update_price_threshold(product_id, price_threshold)
+    async def price_threshold(
+        self, ctx: commands.Context, product_id: str, price_threshold: float
+    ) -> None:
+        is_successful = database.product_tracker.update_price_threshold(
+            product_id, price_threshold
+        )
         if is_successful:
-            await ctx.reply(f"Successfully updated product price_threshold to {price_threshold}")
+            await ctx.reply(
+                f"Successfully updated product price_threshold to {price_threshold}"
+            )
         else:
             await ctx.reply(ERROR_MESSAGES["NO_PRODUCT_FOUND"].format(product_id))
 
     @update.command(name="url")
-    async def update_url(self, ctx: commands.Context, product_id: str, old_url: str, new_url: str) -> None:
+    async def update_url(
+        self, ctx: commands.Context, product_id: str, old_url: str, new_url: str
+    ) -> None:
         urls = TransformerUtils.validate_and_sanitize_urls(new_url)
-        is_successful = database.product_tracker.update_url(product_id, old_url, urls[0])
+        is_successful = database.product_tracker.update_url(
+            product_id, old_url, urls[0]
+        )
 
         if is_successful:
             await ctx.reply(f"Successfully updated url to {urls[0]}")
@@ -118,7 +139,9 @@ class ProductTrackerCog(commands.Cog):
             await ctx.reply(ERROR_MESSAGES["NO_PRODUCT_FOUND"].format(product_id))
 
     @delete.command(name="url")
-    async def delete_url(self, ctx: commands.Context, product_id: str, url: str) -> None:
+    async def delete_url(
+        self, ctx: commands.Context, product_id: str, url: str
+    ) -> None:
         is_successful = database.product_tracker.delete_url(product_id, url)
 
         if is_successful:
@@ -127,7 +150,9 @@ class ProductTrackerCog(commands.Cog):
             await ctx.reply(ERROR_MESSAGES["NO_PRODUCT_FOUND"].format(product_id))
 
     @commands.Cog.listener()
-    async def on_command_error(self, ctx: commands.Context, error: commands.CommandError) -> None:
+    async def on_command_error(
+        self, ctx: commands.Context, error: commands.CommandError
+    ) -> None:
         print(error)
 
         if isinstance(error.__cause__, InvalidId):
@@ -140,7 +165,9 @@ class ProductTrackerCog(commands.Cog):
 
         # TODO: Implement better error handling. It's too generic
         if isinstance(error, commands.CheckFailure):
-            await ctx.reply(f"Limit Reached. You can only track upto {MAX_PRODUCTS_TRACKED_PER_USER} products currently.")
+            await ctx.reply(
+                f"Limit Reached. You can only track upto {MAX_PRODUCTS_TRACKED_PER_USER} products currently."
+            )
             return
 
         if str(error.__cause__) == TransformerUtils.UNSUPPORTED_URL_EXCEPTION_STRING:
@@ -148,6 +175,8 @@ class ProductTrackerCog(commands.Cog):
             return
 
         notification = Notification()
-        notification.email.send_email(str(error), "[Error] Discord Command", ERROR_NOTIFICATION_EMAIL_ADDRESSES)
+        notification.email.send_email(
+            str(error), "[Error] Discord Command", ERROR_NOTIFICATION_EMAIL_ADDRESSES
+        )
 
         await ctx.reply("Something went wrong")

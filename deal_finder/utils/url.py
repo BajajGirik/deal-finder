@@ -1,5 +1,6 @@
 import re
 
+
 class URLUtils:
     @staticmethod
     def __is_complete_match(regex: re.Pattern[str], url: str) -> bool:
@@ -22,10 +23,11 @@ class URLUtils:
 
         return URLUtils.__is_complete_match(amazon_url_regex, url)
 
-
     @staticmethod
     def is_flipkart_url(url: str) -> bool:
-        flipkart_url_regex_string = r"https://www.flipkart.com/[a-zA-Z0-9@:%._\\+~#?&//=,-]*"
+        flipkart_url_regex_string = (
+            r"https://www.flipkart.com/[a-zA-Z0-9@:%._\\+~#?&//=,-]*"
+        )
         flipkart_url_regex = re.compile(flipkart_url_regex_string)
 
         return URLUtils.__is_complete_match(flipkart_url_regex, url)
