@@ -1,4 +1,6 @@
-FROM python:3.9.17
+FROM --platform=linux/amd64 python:3.9.17
+
+WORKDIR /deal_finder
 
 # Chrome installation
 # Adding trusting keys to apt for repositories
@@ -12,15 +14,19 @@ RUN apt-get -y update
 RUN apt-get install -y google-chrome-stable
 
 # Chrome Driver installation
-RUN apt-get install -yqq unzip
+ARG SCRIPT_FILE="get_chromedriver_download_url.py"
 
-RUN wget -O /tmp/chromedriver.zip http://chromedriver.storage.googleapis.com/`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE`/chromedriver_linux64.zip
+ARG CHROMEDRIVER_FILE_PATH="/tmp/chromedriver.zip"
 
-RUN unzip /tmp/chromedriver.zip chromedriver -d /usr/local/bin/
+COPY $SCRIPT_FILE /deal_finder
+
+RUN wget -O $CHROMEDRIVER_FILE_PATH $(python3 /deal_finder/$SCRIPT_FILE linux64)
+
+RUN unzip -j $CHROMEDRIVER_FILE_PATH "chromedriver*/chromedriver" -d /usr/local/bin/
+
+RUN rm -rf /deal_finder/$SCRIPT_FILE $CHROMEDRIVER_FILE_PATH
 
 # Project setup
-WORKDIR /deal_finder
-
 COPY requirements.txt /deal_finder
 
 RUN pip3 install -r requirements.txt
