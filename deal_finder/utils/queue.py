@@ -52,6 +52,12 @@ class CircularQueue:
         if found_at != -1:
             self.__delete_at_index(found_at)
 
+    def peek(self) -> Any:
+        if self.is_empty():
+            return None
+
+        return self._queue[self._front]
+
     def enqueue(self, data: Any) -> None:
         if self.is_full(): 
             raise Exception("Enqueuing when queue is full")
