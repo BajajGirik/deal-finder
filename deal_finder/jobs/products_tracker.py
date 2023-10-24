@@ -3,6 +3,7 @@ from typing import List, Optional, TypedDict
 from database.database import Database
 from database.product_tracker import ProductTrackerModel
 from utils.product_meta_collector import ProductMetaCollector
+from utils.cache import FrequencyCache
 
 database = Database()
 
@@ -14,9 +15,12 @@ class ProductTrackingResult(TypedDict):
 
 
 class ProductsTrackerJob:
+    cache: Optional[FrequencyCache] = None
+
     @staticmethod
     def execute() -> List[ProductTrackingResult]:
         start_time = time()
+        ProductsTrackerJob.cache = FrequencyCache()
 
         products = database.product_tracker.find_all()
         print(f"Tracking total {len(products)} product(s)")
@@ -30,6 +34,7 @@ class ProductsTrackerJob:
 
         print(f"Found optimial prices for {len(tracked_product_results)} product(s)")
 
+        ProductsTrackerJob.cache = None
         total_time = round(time() - start_time, 2)
         print(
             f"Total time taken to track {len(products)} product(s): {total_time} seconds"
@@ -43,7 +48,12 @@ class ProductsTrackerJob:
         min_price_available_on = None
 
         for url in product["url"]:
-            meta = ProductMetaCollector.get_product_meta(url)
+            meta = ProductsTrackerJob.cache.get(url)
+
+            if meta is None:
+                meta = ProductMetaCollector.get_product_meta(url)
+                ProductsTrackerJob.cache.set(url, meta)
+
             price = meta["price"]
             is_out_of_stock = meta["is_out_of_stock"]
 
