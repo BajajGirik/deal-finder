@@ -93,7 +93,7 @@ class FrequencyCache(Cache):
     def __delete_least_frequent(self) -> None:
         index = 0
 
-        while len(self.__frequency_buckets[index]) == 0:
+        while self.__frequency_buckets[index].is_empty():
             index += 1
 
         key = self.__frequency_buckets[index].peek()
