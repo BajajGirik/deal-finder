@@ -24,6 +24,24 @@ class URLUtils:
         return URLUtils.__is_complete_match(amazon_url_regex, url)
 
     @staticmethod
+    def shorten_amazon_url(url):
+        product_id_capture_regex = re.compile(r"/dp/([^/]*)")
+        match_object = re.search(product_id_capture_regex, url)
+
+        if match_object is None:
+            return url
+        
+        product_id = match_object[1]
+        if not product_id:
+            return url
+
+        return f"https://www.amazon.in/dp/{product_id}"
+
+    @staticmethod
+    def get_url_without_query_params(url):
+        return url.split("?")[0]
+
+    @staticmethod
     def is_flipkart_url(url: str) -> bool:
         flipkart_url_regex_string = (
             r"https://www.flipkart.com/[a-zA-Z0-9@:%._\\+~#?&//=,-]*"

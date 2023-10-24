@@ -15,18 +15,17 @@ class TransformerUtils:
         return float(price_without_chars)
 
     @staticmethod
-    def sanitize_url(url: str) -> str:
-        # TODO: remove query params from url
-        return url.strip()
-
-    @staticmethod
     def validate_and_sanitize_urls(*args: str) -> List[str]:
         final_urls = []
 
         for url in args:
-            if not URLUtils.is_amazon_url(url) and not URLUtils.is_flipkart_url(url):
-                raise Exception(TransformerUtils.UNSUPPORTED_URL_EXCEPTION_STRING)
+            _url = url.strip()
 
-            final_urls.append(TransformerUtils.sanitize_url(url))
+            if URLUtils.is_amazon_url(_url):
+                final_urls.append(URLUtils.shorten_amazon_url(_url))
+            elif URLUtils.is_flipkart_url(_url):
+                final_urls.append(URLUtils.get_url_without_query_params(_url))
+            else:
+                raise Exception(TransformerUtils.UNSUPPORTED_URL_EXCEPTION_STRING)
 
         return final_urls
