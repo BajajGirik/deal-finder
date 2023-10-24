@@ -3,7 +3,7 @@ from .queue import CircularQueue
 
 
 class Cache:
-    def __init__(self, capacity = 100) -> None:
+    def __init__(self, capacity = 50) -> None:
         self._cache: dict[str, Any] = {}
         self._count = 0
         self._capacity = capacity
@@ -37,7 +37,7 @@ class CacheMeta(TypedDict):
 
 
 class FrequencyCache(Cache):
-    def __init__(self, capacity = 100) -> None:
+    def __init__(self, capacity = 50) -> None:
         self.__frequency_buckets: list[CircularQueue] = []
         self.__cache_meta: dict[str, CacheMeta] = {}
         super().__init__(capacity)

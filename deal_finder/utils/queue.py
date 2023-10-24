@@ -2,7 +2,7 @@ from typing import Any
 
 
 class CircularQueue:
-    def __init__(self, size: int = 100):
+    def __init__(self, size: int = 50):
         self._size: int = size
         self._queue: list = [None for i in range(size)] 
         self._front: int = -1
