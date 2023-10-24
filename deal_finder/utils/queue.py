@@ -12,7 +12,7 @@ class CircularQueue:
         if not isinstance(val, int):
             raise TypeError(f"Incorrect type for \"val\": {type(val)}")
 
-        return val + 1 % self._size 
+        return (val + 1) % self._size 
 
     def is_full(self) -> bool:
         return (self._rear + 1) % self._size == self._front
