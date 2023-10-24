@@ -73,10 +73,9 @@ class FrequencyCache(Cache):
 
         if old_val is None and self.is_full():
             self.__delete_least_frequent()
-        elif old_val is None:
-            self._count += 1
 
         self._cache[key] = val
+        self._count += 1
 
         if old_val is None:
             self.__upsert_cache_meta_and_frequency_buckets(key)
