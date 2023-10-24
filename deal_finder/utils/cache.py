@@ -9,7 +9,7 @@ class Cache:
         self._capacity = capacity
 
     def __raise_not_implemented_error(self, method_name: str) -> None:
-        raise NotImplemented(f"Classes inheriting `{self.__class__.__name__}` class should implement `{method_name}` method")
+        raise NotImplementedError(f"Classes inheriting `Cache` class should implement `{method_name}` method")
 
     def get(self, key: str) -> Any:
         self.__raise_not_implemented_error("get")
