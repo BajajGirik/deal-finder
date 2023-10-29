@@ -2,38 +2,54 @@ from typing import Any
 
 
 class CircularQueue:
-    def __init__(self, size: int = 50):
-        self._size: int = size
-        self._queue: list = [None for i in range(size)] 
+    def __init__(self, max_size: int = 50):
+        self._max_size: int = max_size
+        self.__reset()
+ 
+    def __reset(self):
+        self._queue: list = [] 
         self._front: int = -1
         self._rear: int = -1
- 
+
     def _increment(self, val: int):
         if not isinstance(val, int):
             raise TypeError(f"Incorrect type for \"val\": {type(val)}")
 
-        return (val + 1) % self._size 
+        return (val + 1) % self._max_size 
 
     def is_full(self) -> bool:
-        return (self._rear + 1) % self._size == self._front
+        return (self._rear + 1) % self._max_size == self._front
 
     def is_empty(self) -> bool:
         return self._front == -1
 
+    def __insert_at(self, index: int, val: Any):
+        if index >= self._max_size:
+            raise Exception(f"Inserting data in queue at index: {index} (Queue max size: {self._max_size})")
+
+        if index == len(self._queue):
+            self._queue.append(val)
+        else:
+            self._queue[index] = val
+
     def __delete_at_index(self, index: int) -> None:
         if self._front == self._rear:
-            self._front = self._rear = -1
-            return
+            return self.__reset()
 
         prev_index = index
         index = self._increment(index)
 
         while index != self._rear:
-            self._queue[prev_index] = self._queue[index]
+            self.__insert_at(prev_index, self._queue[index])
             prev_index = index
             index = self._increment(index)
 
         self._queue[prev_index] = self._queue[index]
+
+        if self._front < self._rear:
+            # Remove empty space created at end
+            self._queue.pop(self._rear)
+
         self._rear = prev_index
 
     def delete(self, key: str) -> None:
@@ -64,11 +80,11 @@ class CircularQueue:
              
         if self.is_empty(): 
             self._front = self._rear = 0
-            self._queue[self._rear] = data
+            self.__insert_at(self._rear, data)
             return self._rear
 
         self._rear = self._increment(self._rear)
-        self._queue[self._rear] = data
+        self.__insert_at(self._rear, data)
         return self._rear
 
     def dequeue(self) -> str:
@@ -77,7 +93,7 @@ class CircularQueue:
              
         if (self._front == self._rear): 
             value = self._queue[self._front]
-            self._front = self._rear = -1
+            self.__reset()
             return value
 
         value = self._queue[self._front]
