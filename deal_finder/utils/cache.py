@@ -48,7 +48,7 @@ class FrequencyCache(Cache):
         if meta is None:
             # New key is inserted
             if len(self.__frequency_buckets) == 0:
-                self.__frequency_buckets.append(CircularQueue())
+                self.__frequency_buckets.append(CircularQueue(self._capacity))
 
             self.__frequency_buckets[0].enqueue(key)
             self.__cache_meta[key] = { "frequency": 0 }
@@ -58,7 +58,7 @@ class FrequencyCache(Cache):
         meta["frequency"] += 1
 
         if len(self.__frequency_buckets) <= meta["frequency"]:
-            self.__frequency_buckets.append(CircularQueue())
+            self.__frequency_buckets.append(CircularQueue(self._capacity))
 
         self.__frequency_buckets[meta["frequency"]].enqueue(key)
 
