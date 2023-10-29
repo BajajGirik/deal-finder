@@ -5,17 +5,17 @@ class CircularQueue:
     def __init__(self, max_size: int = 50):
         self._max_size: int = max_size
         self.__reset()
- 
+
     def __reset(self):
-        self._queue: list = [] 
+        self._queue: list = []
         self._front: int = -1
         self._rear: int = -1
 
     def _increment(self, val: int):
         if not isinstance(val, int):
-            raise TypeError(f"Incorrect type for \"val\": {type(val)}")
+            raise TypeError(f'Incorrect type for "val": {type(val)}')
 
-        return (val + 1) % self._max_size 
+        return (val + 1) % self._max_size
 
     def is_full(self) -> bool:
         return (self._rear + 1) % self._max_size == self._front
@@ -25,7 +25,9 @@ class CircularQueue:
 
     def __insert_at(self, index: int, val: Any):
         if index >= self._max_size:
-            raise Exception(f"Inserting data in queue at index: {index} (Queue max size: {self._max_size})")
+            raise Exception(
+                f"Inserting data in queue at index: {index} (Queue max size: {self._max_size})"
+            )
 
         if index == len(self._queue):
             self._queue.append(val)
@@ -61,7 +63,7 @@ class CircularQueue:
                 found_at = curr_index
                 break
             curr_index = self._increment(curr_index)
-        
+
         if self._queue[curr_index] == key:
             found_at = curr_index
 
@@ -75,10 +77,10 @@ class CircularQueue:
         return self._queue[self._front]
 
     def enqueue(self, data: Any) -> None:
-        if self.is_full(): 
+        if self.is_full():
             raise Exception("Enqueuing when queue is full")
-             
-        if self.is_empty(): 
+
+        if self.is_empty():
             self._front = self._rear = 0
             self.__insert_at(self._rear, data)
             return self._rear
@@ -88,10 +90,10 @@ class CircularQueue:
         return self._rear
 
     def dequeue(self) -> str:
-        if (self.is_empty()):
+        if self.is_empty():
             raise Exception("Dequeuing when queue is Empty")
-             
-        if (self._front == self._rear): 
+
+        if self._front == self._rear:
             value = self._queue[self._front]
             self.__reset()
             return value

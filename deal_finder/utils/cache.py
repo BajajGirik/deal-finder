@@ -3,13 +3,15 @@ from .queue import CircularQueue
 
 
 class Cache:
-    def __init__(self, capacity = 50) -> None:
+    def __init__(self, capacity=50) -> None:
         self._cache: dict[str, Any] = {}
         self._count = 0
         self._capacity = capacity
 
     def __raise_not_implemented_error(self, method_name: str) -> None:
-        raise NotImplementedError(f"Classes inheriting `Cache` class should implement `{method_name}` method")
+        raise NotImplementedError(
+            f"Classes inheriting `Cache` class should implement `{method_name}` method"
+        )
 
     def get(self, key: str) -> Any:
         self.__raise_not_implemented_error("get")
@@ -37,7 +39,7 @@ class CacheMeta(TypedDict):
 
 
 class FrequencyCache(Cache):
-    def __init__(self, capacity = 50) -> None:
+    def __init__(self, capacity=50) -> None:
         self.__frequency_buckets: list[CircularQueue] = []
         self.__cache_meta: dict[str, CacheMeta] = {}
         super().__init__(capacity)
@@ -51,7 +53,7 @@ class FrequencyCache(Cache):
                 self.__frequency_buckets.append(CircularQueue(self._capacity))
 
             self.__frequency_buckets[0].enqueue(key)
-            self.__cache_meta[key] = { "frequency": 0 }
+            self.__cache_meta[key] = {"frequency": 0}
             return
 
         self.__frequency_buckets[meta["frequency"]].delete(key)

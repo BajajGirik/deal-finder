@@ -30,7 +30,7 @@ class URLUtils:
 
         if match_object is None:
             return url
-        
+
         product_id = match_object[1]
         if not product_id:
             return url
